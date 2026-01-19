@@ -16,3 +16,4 @@ yarn-error.log*
 #File cache sistem
 .DS_Store
 Thumbs.db
+/src/generated/prisma

@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(100)
+  name      String   @db.VarChar(100)
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("update_at")
+
+  @@map("users")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique @db.VarChar(100)
+  Products  Product[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("categories")
+}
+
+model Product {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(120)
+  serialNo   String   @unique @db.VarChar(12)
+  quantity   Int      @default(0)
+  desc       String?  @db.Text
+  status     Status   @default(IN_STOCK)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}
+
+enum Status {
+  IN_STOCK
+  OUT_STOCK
+}
